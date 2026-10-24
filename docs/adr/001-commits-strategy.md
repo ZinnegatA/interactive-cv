@@ -8,7 +8,7 @@
 
 - PRs are merged into `master` via **squash-merge only**; the PR title becomes the commit message.
 - PR titles follow **Conventional Commits**: `type(scope)?: description`.
-  - Allowed types: `feat`, `fix`, `docs`, `refactor`, `chore`.
+  - Allowed types: `chore`, `ci`, `docs`, `feat`, `fix`, `refactor`.
   - Scope is optional until module boundaries settle.
 - A required CI check validates PR titles. A local `commit-msg` hook may be added later as a convenience.
 - Commits on feature branches are not constrained.
