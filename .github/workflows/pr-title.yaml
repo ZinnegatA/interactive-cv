@@ -1,0 +1,34 @@
+# Enforces ADR-001: the PR title becomes the squash commit on master,
+# so it must be a Conventional Commit with an allowed type.
+name: PR title
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  pull-requests: read
+
+jobs:
+  lint:
+    name: Validate PR title
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # Pinned to a commit SHA (v6.1.1) so a moved tag can't change what runs.
+      - uses: amannn/action-semantic-pull-request@48f256284bd46cdaab1048c3721360e808335d50
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # Keep in sync with ADR-001.
+          types: |
+            chore
+            ci
+            docs
+            feat
+            fix
+            refactor
+          requireScope: false
+          subjectPattern: ^(?![A-Z]).+$
+          subjectPatternError: |
+            The subject "{subject}" in title "{title}" must start with a lowercase letter.
