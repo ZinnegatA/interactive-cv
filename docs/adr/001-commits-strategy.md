@@ -2,7 +2,9 @@
 
 ## Context
 
-`master` history should be readable and consistent from the start, and usable later for changelog/version automation. This is a solo project, so branch-level commit discipline adds friction without much value.
+`master` history should be readable and consistent from the start, and usable later for
+changelog/version automation. This is a solo project, so branch-level commit discipline adds
+friction without much value.
 
 ## Decision
 
@@ -10,12 +12,14 @@
 - PR titles follow **Conventional Commits**: `type(scope)?: description`.
   - Allowed types: `chore`, `ci`, `docs`, `feat`, `fix`, `refactor`.
   - Scope is optional until module boundaries settle.
-- A required CI check validates PR titles. A local `commit-msg` hook may be added later as a convenience.
+- A required CI check validates PR titles. A local `commit-msg` hook may be added later as a
+  convenience.
 - Commits on feature branches are not constrained.
 
 ## Alternatives considered
 
-- **Rebase-merge with per-commit linting:** every branch commit lands on `master`, so each one must be linted and kept clean.
+- **Rebase-merge with per-commit linting:** every branch commit lands on `master`, so each one must
+  be linted and kept clean.
 - **Merge commits:** cluttered history with no benefit for a single contributor.
 - **No convention:** inconsistent history and no path to automated changelogs.
 

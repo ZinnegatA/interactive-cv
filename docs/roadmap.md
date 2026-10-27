@@ -1,16 +1,16 @@
 # Roadmap
 
 Progress towards v1 of the Interactive CV. Scope and goals are defined in the [charter](charter.md);
-decisions are recorded as [ADRs](adr/). This file tracks sequencing and progress only, so it
-carries no dates or estimates.
+decisions are recorded as [ADRs](adr/). This file tracks sequencing and progress only, so it carries
+no dates or estimates.
 
 **How to read it**
 
 - Work is grouped into sprints, in order. Each sprint has a goal; it is done when every item is
   checked and its exit criteria hold.
 - An item is checked only when it is merged to `master` with green CI.
-- Items that need a tool or design decision first are listed under [Open decisions](#open-decisions).
-  A decision leaves that table when its ADR or PR is merged.
+- Items that need a tool or design decision first are listed under
+  [Open decisions](#open-decisions). A decision leaves that table when its ADR or PR is merged.
 - This file is updated in the same PR that completes an item.
 
 ## Status
@@ -26,8 +26,9 @@ carries no dates or estimates.
 
 ## Sprint 0 - Walking skeleton
 
-**Goal:** a thin end-to-end slice works: Next.js renders the CV using data it fetches from the NestJS API, which reads it from Postgres.
-Every merge to `master` is gated by green CI, and production images build in CI. Deployment itself is Sprint 1.
+**Goal:** a thin end-to-end slice works: Next.js renders the CV using data it fetches from the
+NestJS API, which reads it from Postgres. Every merge to `master` is gated by green CI, and
+production images build in CI. Deployment itself is Sprint 1.
 
 ### Foundations
 
@@ -129,8 +130,8 @@ seeded CV data from `GET /api/v1/profile`; every merge to `master` passes the fu
 - [ ] Per-IP and per-session rate limits
 - [ ] Daily token budget with a circuit breaker
 - [ ] Answers cite source documents and never invent experience
-- [ ] Golden eval set (deterministic checks and LLM-as-judge) runs in CI and gates merges that
-      touch the chat
+- [ ] Golden eval set (deterministic checks and LLM-as-judge) runs in CI and gates merges that touch
+      the chat
 
 ## Sprint 5 - Hardening and v1 launch
 
@@ -167,14 +168,13 @@ From [charter §6](charter.md). Checked when verified in production.
 
 ## Open decisions
 
-| Decision                                                 | Needed by                    |
-| -------------------------------------------------------- | ---------------------------- |
-| Lint and format tooling                                  | Sprint 0 - monorepo skeleton |
-| Test tooling                                             | Sprint 0 - CI and tests      |
-| ORM, migrations and schema location                      | Sprint 0 - API foundation    |
-| Contract authoring (shared schemas vs OpenAPI-generated) | Sprint 0 - API foundation    |
-| Config validation and logging libraries                  | Sprint 0 - API foundation    |
-| Hosting platform                                         | Sprint 1                     |
-| Domain name                                              | Sprint 1                     |
-| Embedding model                                          | Sprint 2                     |
-| LLM provider and model                                   | Sprint 3                     |
+| Decision                                                 | Needed by                 |
+| -------------------------------------------------------- | ------------------------- |
+| Test tooling                                             | Sprint 0 - CI and tests   |
+| ORM, migrations and schema location                      | Sprint 0 - API foundation |
+| Contract authoring (shared schemas vs OpenAPI-generated) | Sprint 0 - API foundation |
+| Config validation and logging libraries                  | Sprint 0 - API foundation |
+| Hosting platform                                         | Sprint 1                  |
+| Domain name                                              | Sprint 1                  |
+| Embedding model                                          | Sprint 2                  |
+| LLM provider and model                                   | Sprint 3                  |
