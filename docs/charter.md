@@ -1,22 +1,20 @@
 # Project Charter - Interactive CV
 
-Owner: Ruslan Ibragimov | Version: 1.0
-
 ## 1. Problem/Motivation
 
-A PDF CV claims skills (NestJS, event-driven, AI tooling, CI/CD) but proves none.
-This project is a living artifact that demonstrates them in production: the website is the CV,
-and the repository behind it - code, ADRs, CI, architecture - is the evidence.
+A PDF CV claims skills (NestJS, event-driven, AI tooling, CI/CD) but proves none. This project is a
+living artifact that demonstrates them in production: the website is the CV, and the repository
+behind it - code, ADRs, CI, architecture - is the evidence.
 
 ## 2. Goals (measurable)
 
-- G1: A visitor can get answers about my experience via an AI chat grounded in my CV.
-  Answers cite source documents; the golden eval set passes in CI.
+- G1: A visitor can get answers about my experience via an AI chat grounded in my CV. Answers cite
+  source documents; the golden eval set passes in CI.
 - G2: The public repo demonstrates senior-level practices: hexagonal modular monolith with
   boundaries enforced in CI, unit/integration/e2e tests, CI/CD, IaC, and an ADR for every
   hard-to-reverse decision.
-- G3: The site URL replaces the PDF as the primary link in every job application
-  and on my LinkedIn and GitHub profiles.
+- G3: The site URL replaces the PDF as the primary link in every job application and on my LinkedIn
+  and GitHub profiles.
 
 ## 3. Non-goals (as important as goals)
 
@@ -34,12 +32,12 @@ and the repository behind it - code, ADRs, CI, architecture - is the evidence.
 
 ## 5. Scope (v1/MVP)
 
-In: CV page (content served from Postgres via the API), AI chat with guardrails and evals,
-static PDF download, contact links (email, LinkedIn, GitHub), CI/CD pipeline, deployed URL
+In: CV page (content served from Postgres via the API), AI chat with guardrails and evals, static
+PDF download, contact links (email, LinkedIn, GitHub), CI/CD pipeline, deployed URL
 
 Later: event-driven backbone (transactional outbox → queue → worker), contact form with
-notifications, OpenTelemetry tracing incl. LLM spans, "Under the hood" page, MCP server,
-PDF generated from data, design polish and dark mode
+notifications, OpenTelemetry tracing incl. LLM spans, "Under the hood" page, MCP server, PDF
+generated from data, design polish and dark mode
 
 ## 6. Success criteria/Definition of Done for v1
 
@@ -47,8 +45,8 @@ PDF generated from data, design polish and dark mode
 - Chat answers only from CV data, cites its sources, and refuses or redirects off-topic and
   prompt-injection attempts; the golden eval set runs in CI and gates merges that touch the chat
 - CV page LCP p75 < 2.5 s (Core Web Vitals "good"); chat time-to-first-token p95 < 3 s
-- LLM cost ≤ $5/month, enforced by a daily token budget with a circuit breaker, plus per-IP
-  rate limits
+- LLM cost ≤ $5/month, enforced by a daily token budget with a circuit breaker, plus per-IP rate
+  limits
 - Pipeline: lint → typecheck → test → build → deploy on merge to `master`
 
 ## 7. Constraints
@@ -71,10 +69,10 @@ PDF generated from data, design polish and dark mode
 
 ## 9. Milestones
 
-- Sprint 0: charter, ADR-0001..0003, monorepo, CI, API foundation, Profile module, tests,
-  web renders CV from the API. Deploy blocked on the hosting decision
-- Sprint 1: hosting decision + deploy pipeline, full CV data model and seed, PDF download,
-  contact links, domain + HTTPS
+- Sprint 0: charter, ADR-001..003, monorepo, CI, API foundation, Profile module, tests, web renders
+  CV from the API. Deploy blocked on the hosting decision
+- Sprint 1: hosting decision + deploy pipeline, full CV data model and seed, PDF download, contact
+  links, domain + HTTPS
 - Sprint 2: Knowledge module - document ingestion, chunking, embeddings
 - Sprint 3: Chat module - RAG, `LlmPort` with a single adapter, SSE streaming, citations
 - Sprint 4: guardrails (rate limits, token budget, injection defence), golden eval set in CI
@@ -82,7 +80,8 @@ PDF generated from data, design polish and dark mode
 
 ## 10. Open questions
 
-- Development stack: NestJS, TypeScript, PostgreSQL, Next.js → ADR in Sprint 0
-- Hosting within $0 (blocks deploy). Evaluate against free-tier candidates
-  (e.g. Vercel Hobby + Neon free + a free container host) → ADR in Sprint 1
+- Development stack: NestJS, TypeScript, PostgreSQL, Next.js - resolved: fixed upfront as a
+  constraint (§7), so no ADR
+- Hosting within $0 (blocks deploy). Evaluate against free-tier candidates (e.g. Vercel Hobby + Neon
+  free + a free container host) → ADR in Sprint 1
 - LLM provider and model within the $5/month cap → ADR in Sprint 3
