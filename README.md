@@ -142,8 +142,11 @@ roadmap's [Open decisions](docs/roadmap.md#open-decisions) table and add them he
 
 ### Prerequisites
 
-- Node.js - Active LTS; the exact version is pinned in the repository
-- pnpm - version pinned via the `packageManager` field in `package.json`
+- Node.js - the exact version is pinned in `.nvmrc`, so `nvm use` or `fnm use` selects it; `engines`
+  in `package.json` accepts only that major version
+- pnpm 10 or later, installed any way (e.g. `npm install --global pnpm`). Inside the repository,
+  pnpm switches itself to the exact version pinned in the `packageManager` field of `package.json`.
+  Corepack is not needed: Node.js no longer bundles it.
 - Docker - for local PostgreSQL and integration tests
 - Linux, macOS, or Windows with WSL2. On WSL2, clone into the Linux filesystem (not `/mnt/c`):
   installs and file watching are much slower across the boundary.

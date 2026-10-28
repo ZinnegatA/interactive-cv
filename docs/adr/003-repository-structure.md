@@ -56,7 +56,7 @@ covers targeted builds and tests.
 - **Consumption.** Internal packages are consumed through their built output via `package.json`
   `exports`; `contracts` is compiled with `tsc` and built before the apps. No TypeScript `paths`
   aliases across package boundaries, so what works locally is what runs in the container.
-- **Pinning.** The pnpm version is pinned through the `packageManager` field (Corepack).
+- **Pinning.** The pnpm version is pinned through the `packageManager` field.
 
 ## Alternatives considered
 
