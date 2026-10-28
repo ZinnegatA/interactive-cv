@@ -1,0 +1,8 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+
+# 7 days delay for a release to be considered safe to use
+minimumReleaseAge: 10080
+
+trustPolicy: no-downgrade
