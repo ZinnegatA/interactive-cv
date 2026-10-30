@@ -41,9 +41,9 @@ production images build in CI. Deployment itself is Sprint 1.
 
 ### Monorepo skeleton
 
-- [ ] Workspaces: `apps/api`, `apps/web`, `packages/contracts`, `packages/config`
+- [ ] Workspaces: `apps/api`, `apps/web`, `packages/contracts`
 - [x] Node.js and pnpm versions pinned
-- [ ] Shared strict TypeScript config and lint/format presets in `packages/config`
+- [x] Shared strict TypeScript config and lint/format configs at the repository root
 - [x] LF line endings enforced via `.gitattributes`
 - [ ] Workspace dependency direction (apps depend on packages, never the reverse) enforced by
       dependency-cruiser

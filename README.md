@@ -99,12 +99,14 @@ apps/
 ├── api/              # NestJS modular monolith (HTTP entrypoint; worker entrypoint later)
 └── web/              # Next.js presentation layer
 packages/
-├── contracts/        # shared API schemas/types - no Nest or React dependencies
-└── config/           # shared tsconfig, ESLint, and Prettier presets
+└── contracts/        # shared API schemas/types - no Nest or React dependencies
 docs/
 ├── charter.md
 ├── roadmap.md
 └── adr/
+tsconfig.base.json    # strict compiler options extended by every workspace
+eslint.config.js      # one lint config for all workspaces
+.prettierrc
 ```
 
 - `apps/*` may depend on `packages/*`. Packages never depend on apps, and apps never import each
@@ -113,6 +115,8 @@ docs/
   `shared` or `utils` package.
 - Internal packages are consumed through their built output (`package.json` `exports`), not
   TypeScript path aliases, so what runs locally is what runs in the container.
+- TypeScript, ESLint, and Prettier configs live at the repository root and apply to every workspace,
+  so there is one source of truth for tooling and no config package to maintain.
 - The API and web app build into separate images with production dependencies only, and deploy
   independently.
 
@@ -121,6 +125,7 @@ docs/
 | Area                     | Choice                                                                   |
 | ------------------------ | ------------------------------------------------------------------------ |
 | Language                 | TypeScript (strict)                                                      |
+| Module format            | ESM in every workspace                                                   |
 | Runtime                  | Node.js (Active LTS)                                                     |
 | API                      | NestJS                                                                   |
 | Web                      | Next.js                                                                  |
@@ -132,8 +137,7 @@ docs/
 
 ESLint uses `typescript-eslint`'s type-aware rule set, so bugs such as floating or misused promises
 fail the lint step. In async, event-driven code these are a common source of silent production
-failures. Prettier handles formatting only. Both presets live in `packages/config` and are shared by
-every workspace.
+failures. Prettier handles formatting only. Both are configured once at the repository root.
 
 I track open tool decisions (ORM, testing, contract authoring, hosting, LLM provider) in the
 roadmap's [Open decisions](docs/roadmap.md#open-decisions) table and add them here once made.
@@ -150,6 +154,16 @@ roadmap's [Open decisions](docs/roadmap.md#open-decisions) table and add them he
 - Docker - for local PostgreSQL and integration tests
 - Linux, macOS, or Windows with WSL2. On WSL2, clone into the Linux filesystem (not `/mnt/c`):
   installs and file watching are much slower across the boundary.
+
+### Scripts
+
+Run from the repository root.
+
+| Script              | What it does                                                  |
+| ------------------- | ------------------------------------------------------------- |
+| `pnpm lint`         | Lints every workspace with ESLint, including type-aware rules |
+| `pnpm format`       | Formats every file with Prettier                              |
+| `pnpm format:check` | Fails if any file is not formatted; nothing is written        |
 
 ## Testing
 

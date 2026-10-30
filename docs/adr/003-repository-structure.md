@@ -30,10 +30,12 @@ covers targeted builds and tests.
 │   ├── api/              # NestJS monolith (ADR-002): HTTP and, later, worker entrypoints
 │   └── web/              # Next.js
 ├── packages/
-│   ├── contracts/        # shared API schemas/types; no Nest/React dependencies
-│   └── config/           # shared tsconfig and lint presets
+│   └── contracts/        # shared API schemas/types; no Nest/React dependencies
 ├── docs/
 ├── .github/workflows/
+├── tsconfig.base.json    # strict compiler options extended by every workspace
+├── eslint.config.js      # one lint config for all workspaces
+├── .prettierrc
 ├── pnpm-workspace.yaml
 └── package.json          # repo-wide dev tooling and scripts only
 ```
@@ -51,6 +53,12 @@ covers targeted builds and tests.
   `contracts/src/common/`. In `apps/api`, only the `presentation` layer and HTTP plumbing in
   `shared/` import it. Presentation maps contract DTOs to use-case inputs and outputs, so the domain
   and the published contracts change independently. Enforced by dependency-cruiser.
+- **Tooling config.** The TypeScript base config, ESLint config, and Prettier config live at the
+  repository root and apply to every workspace. Differences between workspaces are expressed inside
+  the root config (e.g. ESLint `files` globs), not in per-workspace config files.
+- **Module format.** Every workspace is an ES module package (`"type": "module"`). The base tsconfig
+  uses `module: nodenext` with `verbatimModuleSyntax`, which rejects `import`/`export` in CommonJS
+  files, so one module system holds across the repo.
 - **Dependencies.** Declared in the workspace that uses them; the root `package.json` holds only
   repo-wide dev tooling. Internal dependencies use `workspace:*`.
 - **Consumption.** Internal packages are consumed through their built output via `package.json`
@@ -71,10 +79,16 @@ covers targeted builds and tests.
   both apps can import them, splitting each bounded context across a package boundary. Worth it only
   if the worker needs a different dependency set or release cadence.
 - **Nx:** dependency graph, affected commands, caching, generators, and built-in boundary rules, at
-  the cost of a large configuration and convention surface for two apps and two packages. Its
-  plugins also couple NestJS and Next.js upgrades to Nx releases.
+  the cost of a large configuration and convention surface for two apps and one package. Its plugins
+  also couple NestJS and Next.js upgrades to Nx releases.
 - **Turborepo (deferred, not rejected):** a thin layer over workspaces with task caching and
   `turbo prune` for Docker builds; easy to add and to remove. Not needed at the current size.
+- **Shared config package (`packages/config`):** tsconfig, ESLint, and Prettier presets as an
+  internal package. Pays off when configs are published, reused across repositories, or each
+  workspace lints itself as a cached task. None applies here; root configs give one source of truth
+  without package plumbing. Revisit together with Turborepo.
+- **CommonJS for the API (NestJS's default):** keeps the Nest CLI and Jest defaults, but needs
+  `verbatimModuleSyntax` off and mixes module systems between the API and its ESM dependencies.
 
 ## Consequences
 
@@ -84,9 +98,13 @@ covers targeted builds and tests.
 - Web and API build and deploy independently. The API image is built from the repo root with
   `pnpm deploy --filter api --prod` to get a pruned bundle without frontend dependencies.
 - No task caching: by default CI builds and tests everything. Per-app workflows use `paths` filters
-  covering the app, its internal dependencies, and the lockfile (e.g. `apps/api/**`,
-  `packages/contracts/**`, `packages/config/**`, `pnpm-lock.yaml`), so a contract change still
-  rebuilds its consumers. `pnpm --filter "...[origin/master]"` is the alternative.
+  covering the app, its internal dependencies, the root tooling configs, and the lockfile (e.g.
+  `apps/api/**`, `packages/contracts/**`, `tsconfig.base.json`, `eslint.config.js`,
+  `pnpm-lock.yaml`), so a contract or config change still rebuilds its consumers.
+  `pnpm --filter "...[origin/master]"` is the alternative.
+- ESM in the API means relative imports carry `.js` extensions, and circular imports between
+  decorated classes fail at load time, so dependency-cruiser also forbids circular dependencies.
+  Test tooling must run ESM natively.
 - The worker ships with the API's full dependency set, since both run the same modules. Accepted.
 - The lockfile is shared, so a frontend dependency bump triggers the API pipeline. Accepted at this
   scale.
