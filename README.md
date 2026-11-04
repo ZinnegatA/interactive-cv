@@ -196,7 +196,8 @@ chat exists, a golden eval set (deterministic checks plus LLM-as-judge) gates me
 - The PR title becomes the commit on `master`, so PR titles follow
   [Conventional Commits](https://www.conventionalcommits.org/): `type(scope)?: description`. The
   allowed types are `feat`, `fix`, `refactor`, `docs`, `ci`, and `chore`. A CI check enforces this.
-- The PR workflow runs lint → typecheck → test → build.
+- CI runs format check → lint → typecheck → test → build on every PR and again on every merge to
+  `master`.
 - Workflow hardening: third-party actions are pinned to full commit SHAs, `permissions` are
   least-privilege, and every job sets a timeout.
 

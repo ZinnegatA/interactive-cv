@@ -1,0 +1,46 @@
+# Verifies every PR into master and every commit that lands on it.
+# On PRs, `Verify` is a required check in branch protection. No `paths` filter: a required
+# check that is skipped never reports, and the PR stays blocked.
+# Runs on master re-check the merged result and save the dependency cache where every PR can
+# read it - caches saved by one PR are invisible to other PRs.
+name: CI
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+# PR runs share a group per PR, so a new push cancels the outdated run. Push events have no PR
+# number, so each master commit gets its own group (its SHA) and is never cancelled.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      # Must run before setup-node, whose pnpm cache asks pnpm for the store path.
+      # v6.1.1
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115
+
+      # v7.1.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm format:check
+      - run: pnpm lint
